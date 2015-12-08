@@ -3,7 +3,6 @@ package neural_network;
 import java.io.Serializable;
 
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
-import neural_network.perceptron.Perceptron;
 
 /**
  * Represents an artificial neural network.

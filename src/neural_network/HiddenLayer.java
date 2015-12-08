@@ -2,8 +2,6 @@ package neural_network;
 
 import java.io.Serializable;
 
-import neural_network.perceptron.Perceptron;
-
 /**
  * Represents a hidden layer in an artificial neural network.
  * 

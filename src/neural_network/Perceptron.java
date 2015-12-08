@@ -1,4 +1,4 @@
-package neural_network.perceptron;
+package neural_network;
 
 import java.io.Serializable;
 import java.util.Arrays;

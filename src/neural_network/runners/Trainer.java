@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import neural_network.Data;
 import neural_network.HiddenLayer;
 import neural_network.NeuralNetwork;
-import neural_network.perceptron.Perceptron;
+import neural_network.Perceptron;
 
 
 /**
@@ -19,9 +19,7 @@ import neural_network.perceptron.Perceptron;
 public class Trainer extends Runner {
 
 	private final double LEARNING_RATE = .1;
-	private final double GOAL_TEST_ERROR_RATE = .13;
-	private final boolean BACKPROP_DEBUG = false;
-	private final boolean TEST_DEBUG = false;
+	private final double GOAL_TEST_ERROR_RATE = .15;
 	private final boolean TRAIN_ERROR_DEBUG = false;
 	private final boolean TEST_ERROR_DEBUG = false;
 	
@@ -44,19 +42,19 @@ public class Trainer extends Runner {
 		
 		@Override
 		public void run() {
-			// start training
 			double testingError, trainingError;
+			int iteration = 0;
 			do {
+				// TRAIN NEURAL NETWORK START
 				trainingError = 0;
-				testingError = 0;
-				// iterate over all folds except fold containing test data
-				for (int fold = 0; fold < 10; fold++) {
-					if (fold == testFoldIndex) {
+				for (int foldIndex = 0; foldIndex < 10; foldIndex++) {
+					// iterate over all folds except fold containing test data
+					if (foldIndex == testFoldIndex) {
 						continue;
 					}
-					ArrayList<Data> currentFold = folds.get(fold);
-					for (int datapointIndex = 0; datapointIndex < currentFold.size(); datapointIndex++) {
-						Data datapoint = currentFold.get(datapointIndex);
+					ArrayList<Data> fold = folds.get(foldIndex);
+					for (int datapointIndex = 0; datapointIndex < fold.size(); datapointIndex++) {
+						Data datapoint = fold.get(datapointIndex);
 			
 						// input values to feed into neural network
 						double[] inputs = datapoint.getInputs();
@@ -66,18 +64,6 @@ public class Trainer extends Runner {
 						
 						// what the classification should be
 						int[] actualOutputs = datapoint.getClassification();
-			
-						if (BACKPROP_DEBUG) {
-							System.out.print("Predicted Output (training): ");
-							for (double i : predictedOutputs) {
-								System.out.print(i + " ");
-							}
-							System.out.print("\nActual Output (training): ");
-							for (int i : actualOutputs) {
-								System.out.print(i + " ");
-							}
-							System.out.println();
-						}
 			
 						// BACKPROPAGATION START
 						HiddenLayer[] hiddenLayers = nnet.getHiddenLayers();
@@ -129,8 +115,10 @@ public class Trainer extends Runner {
 						// BACKPROPAGATION END
 					}
 				}
+				// TRAIN NEURAL NETWORK END
 				
 				// TEST NEURAL NETWORK START
+				testingError = 0;
 				ArrayList<Data> testFold = folds.get(testFoldIndex);
 				for (int datapointIndex = 0; datapointIndex < testFold.size(); datapointIndex++) {
 					Data testDatapoint = testFold.get(datapointIndex);
@@ -141,21 +129,10 @@ public class Trainer extends Runner {
 					// compute what the output should be
 					int[] actualOutputs = testDatapoint.getClassification();
 					
-					if (TEST_DEBUG) {
-						System.out.print("Predicted Output (testing): ");
-						for (double i : predictedTestOutputs) {
-							System.out.print(i + " ");
-						}
-						System.out.print("\nActual Output (testing): ");
-						for (int i : actualOutputs) {
-							System.out.print(i + " ");
-						}
-						System.out.println();
-					}
-					
 					// compute testing error
 					double singleTestError = 0;
 					for (int i = 0; i < nnet.NUM_OUTPUT_PERCEPTRONS; i++) {
+						// squaring ensures number is positive
 						singleTestError += (actualOutputs[i] - predictedTestOutputs[i]) * (actualOutputs[i] - predictedTestOutputs[i]);
 					}
 					singleTestError /= nnet.NUM_OUTPUT_PERCEPTRONS;
@@ -167,11 +144,16 @@ public class Trainer extends Runner {
 					System.out.println("Testing error: " + testingError);
 				// TEST NEURAL NETWORK END
 				
+				iteration++;
 			} while (testingError > GOAL_TEST_ERROR_RATE);
 			
 			
 			// prompt to save neural net for future use
-			saveNeuralNetwork("nnet-fold-" + (testFoldIndex + 1));
+			testingError *= 100;
+			testingError = Math.round(testingError);
+			testingError /= 100;
+			saveNeuralNetwork("nnet-fold-" + (testFoldIndex + 1) + "-error-" + testingError);
+			System.out.println("Fold " + testFoldIndex + " took " + iteration + " iterations to compute.");
 		}
 	}
 	
@@ -187,7 +169,7 @@ public class Trainer extends Runner {
 			folds.add(fold);
 		}
 		
-		for (int foldNum = 0; foldNum < 10; foldNum++) {
+		for (int foldNum = 0; foldNum < 1; foldNum++) {
 			new TrainOneFold(foldNum, folds).start();
 		}
 	}

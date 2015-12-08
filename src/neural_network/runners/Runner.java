@@ -31,7 +31,7 @@ public abstract class Runner implements Runnable {
 	protected Runner(ArrayList<Data> data) {
 		// Assume at least one datapoint.
 		INPUT_COUNT = data.get(0).getInputs().length;
-		NUM_HIDDEN_PERCEPTRONS = 21;
+		NUM_HIDDEN_PERCEPTRONS = 42;
 		this.data = data;
 	}
 
