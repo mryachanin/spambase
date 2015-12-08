@@ -1,41 +1,37 @@
 package neural_network.runners;
 
+import java.util.ArrayList;
+
+import neural_network.Data;
+
 /**
  * Used to test an artificial neural network.
  * 
- * @author Mike Yachanin (mry1294)
+ * @author Michael Yachanin (mry1294)
  */
 public class Tester extends Runner {
 	
-	private final boolean DEBUG = false;
+	private final boolean DEBUG = true;
 	
 	/**
 	 * Construct a tester for an artificial neural network.
 	 */
-	public Tester() {
+	public Tester(ArrayList<Data> data) {
+		super(data);
 		loadNeuralNetwork();
 	}
 	
 	@Override
 	public void run() {
-		System.out.println("Enter data to classify: ");
-		String text = in.nextLine();
-		
 		// get input values and feed them into neural network
-		double[] predictedOutputs = nnet.run(getInputs(text));
-		
-		if (DEBUG) {
-			for (int output = 0; output < predictedOutputs.length; outputs++) {
-				System.out.println(String.format("Output $1%d: $2%d", output, predictedOutputs[output]))
+		for (Data datapoint : data) {
+			double[] predictedOutputs = nnet.run(datapoint);
+			
+			if (DEBUG) {
+				for (int output = 0; output < predictedOutputs.length; output++) {
+					System.out.println(String.format("Output $1%d: $2%d", output, predictedOutputs[output]));
+				}
 			}
 		}
-		
-		// print best prediction
-		if (predictedOutputs[0] > predictedOutputs[1] && predictedOutputs[0] > predictedOutputs[2])
-			System.out.println("English");
-		else if (predictedOutputs[1] > predictedOutputs[2])
-			System.out.println("Italian");
-		else
-			System.out.println("Dutch");
 	}
 }

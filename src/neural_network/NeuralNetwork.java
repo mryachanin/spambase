@@ -8,7 +8,7 @@ import neural_network.perceptron.Perceptron;
 /**
  * Represents an artificial neural network.
  * 
- * @author Mike Yachanin (mry1294)
+ * @author Michael Yachanin (mry1294)
  */
 public class NeuralNetwork implements Serializable {
 	
@@ -41,7 +41,8 @@ public class NeuralNetwork implements Serializable {
 		
 		// Initialize hidden layers
 		hiddenLayers = new HiddenLayer[NUM_HIDDEN_LAYERS];
-		for (int hiddenLayer = 0; hiddenLayer < NUM_HIDDEN_LAYERS; hiddenLayer++) {
+		hiddenLayers[0] = new HiddenLayer(numHiddenPerceptrons, numInputs);
+		for (int hiddenLayer = 1; hiddenLayer < NUM_HIDDEN_LAYERS; hiddenLayer++) {
 			hiddenLayers[hiddenLayer] = new HiddenLayer(numHiddenPerceptrons, numHiddenPerceptrons);
 		}
 		
@@ -92,8 +93,8 @@ public class NeuralNetwork implements Serializable {
 	 * @param inputs: The inputs to use.
 	 * @return: The output of this neural network given an array of inputs.
 	 */
-	public double[] run(double[] inputs) {
-		double[] lastOutputs = inputs;
+	public double[] run(Data inputs) {
+		double[] lastOutputs = inputs.getInputs();
 		
 		for (int hiddenLayer = 0; hiddenLayer < NUM_HIDDEN_LAYERS; hiddenLayer++) {
 			Perceptron[] hiddenPerceptrons = hiddenLayers[hiddenLayer].getHiddenPerceptrons();
@@ -109,7 +110,7 @@ public class NeuralNetwork implements Serializable {
 			output[outputPerceptron] = outputPerceptrons[outputPerceptron].getOutput(lastOutputs);
 		}
 		
-		lastInputs = inputs;
+		lastInputs = inputs.getInputs();
 		return output;
 	}
 }

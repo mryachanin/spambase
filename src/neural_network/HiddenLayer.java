@@ -7,7 +7,7 @@ import neural_network.perceptron.Perceptron;
 /**
  * Represents a hidden layer in an artificial neural network.
  * 
- * @author Mike Yachanin (mry1294)
+ * @author Michael Yachanin (mry1294)
  */
 public class HiddenLayer implements Serializable {
 
@@ -22,7 +22,7 @@ public class HiddenLayer implements Serializable {
 	 * @param numInputs: The number of inputs to each perceptron.
 	 */
 	public HiddenLayer(int numPerceptrons, int numInputs) {
-		// initialize the perceptrons in this hidden layer
+		perceptrons = new Perceptron[numPerceptrons];
 		for (int perceptron = 0; perceptron < numPerceptrons; perceptron++) {
 			perceptrons[perceptron] = new Perceptron(numInputs);
 		}

@@ -7,7 +7,7 @@ import java.util.Random;
 /**
  * Represents a perceptron in an artificial neural network.
  *  
- * @author Mike Yachanin (mry1294)
+ * @author Michael Yachanin (mry1294)
  */
 public class Perceptron implements Serializable {
 	
