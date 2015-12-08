@@ -149,9 +149,9 @@ public class Trainer extends Runner {
 			
 			
 			// prompt to save neural net for future use
-			testingError *= 100;
+			testingError *= 100000;
 			testingError = Math.round(testingError);
-			testingError /= 100;
+			testingError /= 100000;
 			saveNeuralNetwork("nnet-fold-" + (testFoldIndex + 1) + "-error-" + testingError);
 			System.out.println("Fold " + testFoldIndex + " took " + iteration + " iterations to compute.");
 		}
@@ -169,7 +169,7 @@ public class Trainer extends Runner {
 			folds.add(fold);
 		}
 		
-		for (int foldNum = 0; foldNum < 1; foldNum++) {
+		for (int foldNum = 0; foldNum < 5; foldNum++) {
 			new TrainOneFold(foldNum, folds).start();
 		}
 	}
