@@ -19,8 +19,7 @@ import neural_network.Perceptron;
 public class Trainer extends Runner {
 
 	private final double LEARNING_RATE = .1;
-	private final double GOAL_TEST_ERROR_RATE = .15;
-	private final boolean TRAIN_ERROR_DEBUG = false;
+	private final double GOAL_TEST_ERROR_RATE = .10;
 	private final boolean TEST_ERROR_DEBUG = false;
 	
 	/**
@@ -42,11 +41,10 @@ public class Trainer extends Runner {
 		
 		@Override
 		public void run() {
-			double testingError, trainingError;
+			double testingError;
 			int iteration = 0;
 			do {
 				// TRAIN NEURAL NETWORK START
-				trainingError = 0;
 				for (int foldIndex = 0; foldIndex < 10; foldIndex++) {
 					// iterate over all folds except fold containing test data
 					if (foldIndex == testFoldIndex) {
@@ -63,31 +61,29 @@ public class Trainer extends Runner {
 						double[] predictedOutputs = nnet.run(datapoint);
 						
 						// what the classification should be
-						int[] actualOutputs = datapoint.getClassification();
+						int[] expectedOutputs = datapoint.getClassification();
 			
 						// BACKPROPAGATION START
 						HiddenLayer[] hiddenLayers = nnet.getHiddenLayers();
-						
 						Perceptron[] outputPerceptrons = nnet.getOutputPerceptrons();
 						Perceptron[] perceptronsConnectedToOutputs = hiddenLayers[hiddenLayers.length - 1].getHiddenPerceptrons();
-						double[] newOutWeights = new double[perceptronsConnectedToOutputs.length];
-						double[] outputError = new double[perceptronsConnectedToOutputs.length];
 						
 						// update output weights
+						double[] outputError = new double[perceptronsConnectedToOutputs.length];
 						for (int i = 0; i < nnet.NUM_OUTPUT_PERCEPTRONS; i++) {
-							double outError = actualOutputs[i] - predictedOutputs[i];
-							double outTransfer = predictedOutputs[i];
-							double outModifiedError = outError * outTransfer * (1 - outTransfer);
+							double expected = expectedOutputs[i];
+							double actual = predictedOutputs[i];
+							
+							double outModifiedError = actual * (1 - actual) * (expected - actual);
 							double[] outputWeights = outputPerceptrons[i].getWeights();
+							double[] newOutputWeights = new double[perceptronsConnectedToOutputs.length];
 			
-							// for each hidden neuron connected to this output neuron
+							// for each hidden perceptron connected to this output neuron
 							for (int j = 0; j < perceptronsConnectedToOutputs.length; j++) {
-								newOutWeights[j] = LEARNING_RATE * outModifiedError * perceptronsConnectedToOutputs[j].getOutput();
+								newOutputWeights[j] = LEARNING_RATE * outModifiedError * perceptronsConnectedToOutputs[j].getOutput();
 								outputError[j] += outModifiedError * outputWeights[j];
 							}
-							outputPerceptrons[i].updateWeights(newOutWeights);
-			
-							trainingError += outError * outError;
+							outputPerceptrons[i].updateWeights(newOutputWeights);
 						}
 			
 						for (int hiddenLayerIndex = hiddenLayers.length - 1; hiddenLayerIndex >= 0; hiddenLayerIndex--) {
@@ -108,10 +104,6 @@ public class Trainer extends Runner {
 								hiddenLayer.getHiddenPerceptrons()[j].updateWeights(newHiddenWeights);
 							}
 						}
-						
-			
-						if (TRAIN_ERROR_DEBUG) 
-							System.out.println("Training error: " + trainingError);
 						// BACKPROPAGATION END
 					}
 				}
@@ -145,14 +137,17 @@ public class Trainer extends Runner {
 				// TEST NEURAL NETWORK END
 				
 				iteration++;
+				if (testingError < .17) {
+					System.out.println("Iteration: " + iteration);
+					System.out.println("Testing error: " + testingError);
+				}
 			} while (testingError > GOAL_TEST_ERROR_RATE);
-			
 			
 			// prompt to save neural net for future use
 			testingError *= 100000;
 			testingError = Math.round(testingError);
 			testingError /= 100000;
-			saveNeuralNetwork("nnet-fold-" + (testFoldIndex + 1) + "-error-" + testingError);
+			saveNeuralNetwork("nnet-fold-" + (testFoldIndex + 1) + "-error-" + testingError + "-iter-" + iteration);
 			System.out.println("Fold " + testFoldIndex + " took " + iteration + " iterations to compute.");
 		}
 	}
@@ -169,7 +164,7 @@ public class Trainer extends Runner {
 			folds.add(fold);
 		}
 		
-		for (int foldNum = 0; foldNum < 5; foldNum++) {
+		for (int foldNum = 0; foldNum < 1; foldNum++) {
 			new TrainOneFold(foldNum, folds).start();
 		}
 	}

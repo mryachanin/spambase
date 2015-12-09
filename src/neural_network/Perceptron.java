@@ -32,7 +32,8 @@ public class Perceptron implements Serializable {
 		
 		Random rand = new Random();
 		for (int i = 0; i < NUM_INPUTS; i++) {
-			weights[i] = -1 + 2*rand.nextDouble();
+			// initialize weights between to values -1 and 1
+			weights[i] = Math.pow(-1, (rand.nextInt(2) + 1)) * rand.nextDouble();
 		}
 		sum = -1;
 		transferValue = -1;

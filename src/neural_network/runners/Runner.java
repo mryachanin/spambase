@@ -19,7 +19,7 @@ public abstract class Runner implements Runnable {
 	
 	protected final int INPUT_COUNT;
 	protected final int NUM_HIDDEN_LAYERS = 1;
-	protected final int NUM_HIDDEN_PERCEPTRONS;
+	protected final int NUM_HIDDEN_PERCEPTRONS = 5;
 	protected final int NUM_OUTPUT_PERCEPTRONS = 1;
 	protected NeuralNetwork nnet;
 	protected final ArrayList<Data> data;
@@ -31,7 +31,6 @@ public abstract class Runner implements Runnable {
 	protected Runner(ArrayList<Data> data) {
 		// Assume at least one datapoint.
 		INPUT_COUNT = data.get(0).getInputs().length;
-		NUM_HIDDEN_PERCEPTRONS = 42;
 		this.data = data;
 	}
 
@@ -54,7 +53,7 @@ public abstract class Runner implements Runnable {
 		
 		// open neural net save file for reading
 		try {
-			ois = new ObjectInputStream(new FileInputStream(new File("nnet.save")));
+			ois = new ObjectInputStream(new FileInputStream(new File("nnet-fold-1-error-0.0866")));
 		} catch (IOException e) {
 			System.out.println("Error opening neural net save file (nnet.save)");
 			System.exit(1);

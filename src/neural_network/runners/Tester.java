@@ -11,8 +11,6 @@ import neural_network.Data;
  */
 public class Tester extends Runner {
 	
-	private final boolean DEBUG = true;
-	
 	/**
 	 * Construct a tester for an artificial neural network.
 	 */
@@ -23,15 +21,40 @@ public class Tester extends Runner {
 	
 	@Override
 	public void run() {
-		// get input values and feed them into neural network
+		int TP = 0, TN = 0, FP = 0, FN = 0;
 		for (Data datapoint : data) {
-			double[] predictedOutputs = nnet.run(datapoint);
-			
-			if (DEBUG) {
-				for (int output = 0; output < predictedOutputs.length; output++) {
-					System.out.println(String.format("Output $1%d: $2%d", output, predictedOutputs[output]));
+			// get input values and feed them into the neural network
+			double[] predictedTestOutputs = nnet.run(datapoint);
+
+			// compute what the output should be
+			int[] actualOutputs = datapoint.getClassification();
+
+			// compute testing error
+			for (int i = 0; i < nnet.NUM_OUTPUT_PERCEPTRONS; i++) {
+				int predicted = (int) Math.round(predictedTestOutputs[i]);
+				int actual = actualOutputs[i];
+
+				if (actual == 1 && predicted == 1) {
+					TP++;
+				}
+				else if (actual == 1 && predicted == 0) {
+					FN++;
+				}
+				else if (actual == 0 && predicted == 1) {
+					FP++;
+				}
+				else {
+					TN++;
 				}
 			}
 		}
+		double testingError = ((double)(FP + FN) / nnet.NUM_OUTPUT_PERCEPTRONS) / data.size();
+		testingError *= 100000;
+		testingError = Math.round(testingError);
+		testingError /= 1000;
+		System.out.println("Accuracy: " + (100 - testingError) + "%");
+		System.out.println("    T    F  ");
+		System.out.printf("T | %d  %d\n", TP, FP);
+		System.out.printf("F | %d  %d\n", FN, TN);
 	}
 }
