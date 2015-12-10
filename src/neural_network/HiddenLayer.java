@@ -5,6 +5,10 @@ import java.io.Serializable;
 /**
  * Represents a hidden layer in an artificial neural network.
  * 
+ * Rationale: having a hidden layer object may help generically 
+ * adding/removing perceptrons in a hidden layer. Different layers
+ * should be able to easilly have different numbers of perceptrons.
+ * 
  * @author Michael Yachanin (mry1294)
  */
 public class HiddenLayer implements Serializable {

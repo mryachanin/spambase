@@ -27,9 +27,6 @@ public abstract class Runner {
 	protected NeuralNetwork nnet;
 	protected final ArrayList<Data> data;
 	
-	/**
-	 * Constructor a runner.
-	 */
 	protected Runner(ArrayList<Data> data) {
 		// Assume at least one datapoint.
 		INPUT_COUNT = data.get(0).getInputs().length;

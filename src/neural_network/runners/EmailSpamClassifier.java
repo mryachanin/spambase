@@ -9,8 +9,7 @@ import neural_network.Data;
 import neural_network.NeuralNetworkException;
 
 /**
- * Main program for classifying email spam using
- * an artificial neural network.
+ * Main program for classifying email spam using an artificial neural network.
  * 
  * Usage: java neural_network.runners.EmailSpamClassifier train training_data_filepath validation_data_filepath
  *        java neural_network.runners.EmailSpamClassifier test validation_data_filepath neural_network_save_filepath

@@ -7,6 +7,9 @@ import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 /**
  * Represents an artificial neural network.
  * 
+ * This is serializable so trained networks can easily be saved
+ * and used for classification or metrics.
+ * 
  * @author Michael Yachanin (mry1294)
  */
 public class NeuralNetwork implements Serializable {

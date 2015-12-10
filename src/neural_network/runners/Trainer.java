@@ -17,7 +17,7 @@ import neural_network.Perceptron;
 public class Trainer extends Runner implements Runnable {
 
 	private final double LEARNING_RATE = .1;
-	private final double GOAL_TEST_ERROR_RATE = .045;
+	private final double GOAL_TEST_ERROR_RATE = .04;
 	private final double GOAL_VALIDATION_ERROR_RATE = .095;
 	private final int MAX_NUM_ITERATIONS = 10;
 	private final boolean TEST_ERROR_DEBUG = false;
