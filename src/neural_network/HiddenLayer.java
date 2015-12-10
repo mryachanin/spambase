@@ -43,4 +43,13 @@ public class HiddenLayer implements Serializable {
 	public Perceptron[] getHiddenPerceptrons() {
 		return perceptrons;
 	}
+	
+	/**
+	 * Resets all hidden perceptrons in this hidden layer to their initial state.
+	 */
+	public void reset() {
+		for (Perceptron hiddenPerceptron : perceptrons) {
+			hiddenPerceptron.reset();
+		}
+	}
 }

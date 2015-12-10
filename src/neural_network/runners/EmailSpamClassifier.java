@@ -6,12 +6,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import neural_network.Data;
+import neural_network.NeuralNetworkException;
 
 /**
  * Main program for classifying email spam using
  * an artificial neural network.
  * 
- * Usage: EmailSpamClassifier < train | test >
+ * Usage: java neural_network.runners.EmailSpamClassifier test|train data_filepath [validation_data_filepath]
  * 
  * @author Michael Yachanin (mry1294)
  */
@@ -21,15 +22,16 @@ public class EmailSpamClassifier {
 	 * 
 	 * @param filepath: The path of a CSV file.
 	 * @return: An ArrayList containing the imported data.
+	 * @throws NeuralNetworkException 
 	 */
-	private static ArrayList<Data> importCSVData(String filepath) {
+	private static ArrayList<Data> importCSVData(String filepath) throws NeuralNetworkException {
 		ArrayList<Data> data = new ArrayList<>();
 		try (BufferedReader br = new BufferedReader(new FileReader(filepath ))) {
 		    for (String line; (line = br.readLine()) != null; ) {
 		        data.add(convertCSVToData(line));
 		    }
 		} catch (IOException e) {
-			errorAndExit("There was an exception while importing CSV data.");
+			throw new NeuralNetworkException("There was an exception while importing CSV data.", e);
 		}
 		return data;
 	}
@@ -63,41 +65,38 @@ public class EmailSpamClassifier {
 	 * 
 	 * @param args: args[0] = "test" or "train" depending on use case.
 	 *              args[1] = filepath of CSV data to either test or train with.
+	 *              args[2] = filepath of validation data if testing.
 	 */
 	public static void main(String[] args) {
-		if (args.length != 2) {
+		if (args.length < 2) {
 			usage();
 		}
 		
-		ArrayList<Data> data = importCSVData(args[1]);
-		switch (args[0].toLowerCase()) {
-			case "test":
-				new Thread(new Tester(data)).start();
-				break;
-			
-			case "train":
-				new Thread(new Trainer(data)).start();
-				break;
+		try {
+			ArrayList<Data> data = importCSVData(args[1]);
+			switch (args[0].toLowerCase()) {
+				case "test":
+					new Tester(data).startTest(args[2], true);
+					break;
 				
-			default:
-				usage();
+				case "train":
+					new Thread(new Trainer(data)).start();
+					break;
+					
+				default:
+					usage();
+			}
+		} catch (NeuralNetworkException e) {
+			System.err.println(e.getMessage());
+			System.exit(1);
 		}
 	}
 	
 	/**
-	 * Prints a usage message to stdout and exits. 
+	 * Prints a usage message to stderr and exits. 
 	 */
 	private static void usage() {
-		errorAndExit("Usage: EmailSpamClassifier <test|train> <filepath to data>");
-	}
-	
-	/**
-	 * Prints an error message to stdout and exits.
-	 * 
-	 * @param error: The error message to print.
-	 */
-	private static void errorAndExit(String error) {
-		System.out.println(error);
+		System.err.println("Usage: java neural_network.runners.EmailSpamClassifier test|train data_filepath [validation_data_filepath]");
 		System.exit(1);
 	}
 }

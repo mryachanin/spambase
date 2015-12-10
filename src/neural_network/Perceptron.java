@@ -16,6 +16,7 @@ public class Perceptron implements Serializable {
 	private final int NUM_INPUTS;
 	private double[] weightedInputs;
 	private double[] weights;
+	private double[] initialWeights;
 	private double sum;
 	private double transferValue;
 	
@@ -35,10 +36,10 @@ public class Perceptron implements Serializable {
 			// initialize weights between to values -1 and 1
 			weights[i] = Math.pow(-1, (rand.nextInt(2) + 1)) * rand.nextDouble();
 		}
+		initialWeights = Arrays.copyOf(weights, numInputs);
 		sum = -1;
 		transferValue = -1;
 	}
-	
 	
 	/**
 	 * Aggregates the weighted inputs connected to this perceptron.
@@ -59,7 +60,6 @@ public class Perceptron implements Serializable {
 		}
 	}
 	
-	
 	/**
 	 * Aggregates the weighted inputs connected to this perceptron.
 	 */
@@ -71,7 +71,6 @@ public class Perceptron implements Serializable {
 		sum /= weightedInputs.length;
 	}
 	
-	
 	/**
 	 * Implements a sigmoid function that converts the weighted inputs' sum
 	 * to a value between 0 and 1.
@@ -79,7 +78,6 @@ public class Perceptron implements Serializable {
 	protected void transfer() {
 		transferValue = 1 / (1 + Math.pow(Math.E, -sum));
 	}
-	
 	
 	/**
 	 * Returns an output based on the aggregation and transformation
@@ -95,7 +93,6 @@ public class Perceptron implements Serializable {
 		return transferValue;
 	}
 	
-	
 	/**
 	 * Returns the output of this perceptron.
 	 * 
@@ -108,7 +105,6 @@ public class Perceptron implements Serializable {
 		return transferValue;
 	}
 	
-	
 	/**
 	 * Returns the weights of the inputs connected to this perceptron.
 	 * 
@@ -117,7 +113,6 @@ public class Perceptron implements Serializable {
 	public double[] getWeights() {
 		return weights;
 	}
-	
 	
 	/**
 	 * Updates the weights of the inputs connected to this perceptron.
@@ -131,6 +126,14 @@ public class Perceptron implements Serializable {
 		}
 	}
 	
+	/**
+	 * Resets this perceptron to its initial state.
+	 */
+	public void reset() {
+		weights = initialWeights;
+		sum = -1;
+		transferValue = -1;
+	}
 	
 	@Override
 	public String toString() {

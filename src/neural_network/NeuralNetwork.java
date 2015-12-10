@@ -52,7 +52,6 @@ public class NeuralNetwork implements Serializable {
 		}
 	}
 	
-	
 	/**
 	 * Returns an array of the output perceptrons.
 	 * 
@@ -61,7 +60,6 @@ public class NeuralNetwork implements Serializable {
 	public Perceptron[] getOutputPerceptrons() {
 		return outputPerceptrons;
 	}
-	
 	
 	/**
 	 * Returns an array of the hidden layers in this network.
@@ -72,19 +70,31 @@ public class NeuralNetwork implements Serializable {
 		return hiddenLayers;
 	}
 	
-	
 	/**
 	 * Returns an array of the last inputs passed through this network.
 	 *  
 	 * @return: The last inputs passed through this network.
 	 */
 	public double[] getLastInputs() {
-		if (this.lastInputs == null) {
+		if (lastInputs == null) {
 			throw new IllegalStateException("This neural network has not been passed any inputs yet");
 		}
-		return this.lastInputs;
+		return lastInputs;
 	}
 	
+	/**
+	 * Resets all perceptrons in this neural network to their original random weights.
+	 */
+	public void reset() {
+		for (HiddenLayer hiddenLayer : hiddenLayers) {
+			hiddenLayer.reset();
+		}
+		
+		for (Perceptron outputPerceptron : outputPerceptrons) {
+			outputPerceptron.reset();
+		}
+		lastInputs = null;
+	}
 	
 	/**
 	 * Runs an array of inputs through this network.
