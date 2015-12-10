@@ -17,16 +17,18 @@ import neural_network.Perceptron;
 public class Trainer extends Runner implements Runnable {
 
 	private final double LEARNING_RATE = .1;
-	private final double GOAL_TEST_ERROR_RATE = .04;
+	private final double GOAL_TEST_ERROR_RATE = .045;
+	private final double GOAL_VALIDATION_ERROR_RATE = .095;
+	private final int MAX_NUM_ITERATIONS = 10;
 	private final boolean TEST_ERROR_DEBUG = false;
 	private final Tester tester;
 	
 	/**
 	 * Construct a trainer for an artificial neural network.
 	 */
-	public Trainer(ArrayList<Data> data) {
+	public Trainer(ArrayList<Data> data, ArrayList<Data> validationData) {
 		super(data);
-		tester = new Tester(data);
+		tester = new Tester(validationData);
 	}
 	
 	/**
@@ -166,21 +168,24 @@ public class Trainer extends Runner implements Runnable {
 			}
 			// TEST NEURAL NETWORK END
 			
-			// probably won't get much better after 1K iterations
-			if (iteration > 1000) {
-				System.out.printf("Fold: %d - Lowest testing error acheived: %.3f%%%n", 
-						(testFoldIndex + 1), (100 * lowestTestingError));
+			// probably won't get much better, short circuit
+			if (iteration > MAX_NUM_ITERATIONS) {
+				if (TEST_ERROR_DEBUG) {
+					System.out.printf("Fold: %d - Lowest testing error acheived: %.3f%%%n",
+							(testFoldIndex + 1), (100 * lowestTestingError));
+				}
 				return;
 			}
 		} while (testingError > GOAL_TEST_ERROR_RATE);
 		
 		// test against validation data
-		// only save if validation error < .1
 		double validationError = tester.startTest(nnet, false);
 		if (TEST_ERROR_DEBUG) {
 			System.out.println("Validation error: " + validationError);
 		}
-		if (validationError < .1) {
+
+		// only save if validation error is reasonable
+		if (validationError < GOAL_VALIDATION_ERROR_RATE) {
 			try {
 				saveNeuralNetwork(String.format("nnet_fold-%d_validationerror-%.4f_testerror-%.4f_iter-%d.save",
 						(testFoldIndex + 1), validationError, testingError, iteration));

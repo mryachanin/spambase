@@ -74,7 +74,7 @@ public class Tester extends Runner {
 		
 		if (debug) {
 			double accuracy = 100 * (1 - testingError);
-			System.out.printf("Accuracy: %.3f%%%n", accuracy);
+			System.out.printf("Accuracy: %.4f%%%n", accuracy);
 			
 			// print confusion matrix
 			System.out.println("    T    F  ");

@@ -12,7 +12,8 @@ import neural_network.NeuralNetworkException;
  * Main program for classifying email spam using
  * an artificial neural network.
  * 
- * Usage: java neural_network.runners.EmailSpamClassifier test|train data_filepath [validation_data_filepath]
+ * Usage: java neural_network.runners.EmailSpamClassifier train training_data_filepath validation_data_filepath
+ *        java neural_network.runners.EmailSpamClassifier test validation_data_filepath neural_network_save_filepath
  * 
  * @author Michael Yachanin (mry1294)
  */
@@ -62,13 +63,9 @@ public class EmailSpamClassifier {
 	
 	/**
 	 * Main Program.
-	 * 
-	 * @param args: args[0] = "test" or "train" depending on use case.
-	 *              args[1] = filepath of CSV data to either test or train with.
-	 *              args[2] = filepath of validation data if testing.
 	 */
 	public static void main(String[] args) {
-		if (args.length < 2) {
+		if (args.length != 3) {
 			usage();
 		}
 		
@@ -80,7 +77,7 @@ public class EmailSpamClassifier {
 					break;
 				
 				case "train":
-					new Thread(new Trainer(data)).start();
+					new Thread(new Trainer(data, importCSVData(args[2]))).start();
 					break;
 					
 				default:
@@ -96,7 +93,8 @@ public class EmailSpamClassifier {
 	 * Prints a usage message to stderr and exits. 
 	 */
 	private static void usage() {
-		System.err.println("Usage: java neural_network.runners.EmailSpamClassifier test|train data_filepath [validation_data_filepath]");
+		System.err.println("Usage: java neural_network.runners.EmailSpamClassifier train training_data_filepath validation_data_filepath");
+		System.err.println("       java neural_network.runners.EmailSpamClassifier test validation_data_filepath neural_network_save_filepath");
 		System.exit(1);
 	}
 }
