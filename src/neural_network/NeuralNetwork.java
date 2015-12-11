@@ -2,8 +2,6 @@ package neural_network;
 
 import java.io.Serializable;
 
-import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
-
 /**
  * Represents an artificial neural network.
  * 
@@ -22,8 +20,6 @@ public class NeuralNetwork implements Serializable {
 	public final int NUM_HIDDEN_LAYERS;
 	public final int NUM_OUTPUT_PERCEPTRONS;
 	
-	private double[] lastInputs;
-	
 	/**
 	 * Construct the artificial neural network.
 	 * 
@@ -34,12 +30,11 @@ public class NeuralNetwork implements Serializable {
 	 */
 	public NeuralNetwork(int numInputs, int numHiddenLayers, int numHiddenPerceptrons, int numOutputPerceptrons) {
 		if (numHiddenLayers <= 0) {
-			throw new ValueException("The number of hidden layers must be greater than zero.");
+			throw new IllegalArgumentException("The number of hidden layers must be greater than zero.");
 		}
 		NUM_INPUTS = numInputs;
 		NUM_HIDDEN_LAYERS = numHiddenLayers;
 		NUM_OUTPUT_PERCEPTRONS = numOutputPerceptrons;
-		lastInputs = null;
 		
 		// Initialize hidden layers
 		hiddenLayers = new HiddenLayer[NUM_HIDDEN_LAYERS];
@@ -74,18 +69,6 @@ public class NeuralNetwork implements Serializable {
 	}
 	
 	/**
-	 * Returns an array of the last inputs passed through this network.
-	 *  
-	 * @return: The last inputs passed through this network.
-	 */
-	public double[] getLastInputs() {
-		if (lastInputs == null) {
-			throw new IllegalStateException("This neural network has not been passed any inputs yet");
-		}
-		return lastInputs;
-	}
-	
-	/**
 	 * Resets all perceptrons in this neural network to their original random weights.
 	 */
 	public void reset() {
@@ -96,16 +79,15 @@ public class NeuralNetwork implements Serializable {
 		for (Perceptron outputPerceptron : outputPerceptrons) {
 			outputPerceptron.reset();
 		}
-		lastInputs = null;
 	}
 	
 	/**
-	 * Runs an array of inputs through this network.
+	 * Runs an array of inputs through this network and predicts a classification.
 	 *  
 	 * @param inputs: The inputs to use.
 	 * @return: The output of this neural network given an array of inputs.
 	 */
-	public double[] run(Data inputs) {
+	public double[] classify(Data inputs) {
 		double[] lastOutputs = inputs.getInputs();
 		
 		for (int hiddenLayer = 0; hiddenLayer < NUM_HIDDEN_LAYERS; hiddenLayer++) {
@@ -122,7 +104,6 @@ public class NeuralNetwork implements Serializable {
 			output[outputPerceptron] = outputPerceptrons[outputPerceptron].getOutput(lastOutputs);
 		}
 		
-		lastInputs = inputs.getInputs();
 		return output;
 	}
 }

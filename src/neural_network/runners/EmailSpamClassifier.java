@@ -76,7 +76,9 @@ public class EmailSpamClassifier {
 					break;
 				
 				case "train":
-					new Thread(new Trainer(data, importCSVData(args[2]))).start();
+					Thread trainer = new Thread(new Trainer(data, importCSVData(args[2])));
+					trainer.start();
+					trainer.join();
 					break;
 					
 				default:
@@ -85,6 +87,9 @@ public class EmailSpamClassifier {
 		} catch (NeuralNetworkException e) {
 			System.err.println(e.getMessage());
 			System.exit(1);
+		} catch (InterruptedException e) {
+			System.err.println("There was an error in the execution of a trainer thread.");
+			e.printStackTrace();
 		}
 	}
 	

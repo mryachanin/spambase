@@ -40,13 +40,13 @@ public class Tester extends Runner {
 	 * @param debug : Should a confusion matrix be printed?
 	 * @return : The validation error rate.
 	 */
-	public double startTest(NeuralNetwork nnet, boolean debug) {
+	protected double startTest(NeuralNetwork nnet, boolean debug) {
 		this.nnet = nnet;
 		
 		int TP = 0, TN = 0, FP = 0, FN = 0;
 		for (Data datapoint : data) {
 			// get input values and feed them into the neural network
-			double[] predictedTestOutputs = nnet.run(datapoint);
+			double[] predictedTestOutputs = nnet.classify(datapoint);
 
 			// compute what the output should be
 			int[] actualOutputs = datapoint.getClassification();
@@ -74,12 +74,12 @@ public class Tester extends Runner {
 		
 		if (debug) {
 			double accuracy = 100 * (1 - testingError);
-			System.out.printf("Accuracy: %.4f%%%n", accuracy);
+			System.out.printf("Accuracy: %.4f%%%n%n", accuracy);
 			
-			// print confusion matrix
-			System.out.println("    T    F  ");
-			System.out.printf("T | %d  %d\n", TP, FP);
-			System.out.printf("F | %d  %d\n", FN, TN);
+			System.out.println("Confusion matrix:");
+			System.out.println("     T   F  ");
+			System.out.printf("T | %3d %3d\n", TP, FP);
+			System.out.printf("F | %3d %3d\n", FN, TN);
 		}
 		return testingError;
 	}

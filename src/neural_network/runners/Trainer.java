@@ -64,7 +64,7 @@ public class Trainer extends Runner implements Runnable {
 	 * @param testFoldIndex : The index of the fold to use as test data.
 	 * @param folds : All folds to use to train/test a neural network.
 	 */
-	public void trainFold(int testFoldIndex, ArrayList<ArrayList<Data>> folds) {
+	private void trainFold(int testFoldIndex, ArrayList<ArrayList<Data>> folds) {
 		double testingError;
 		double lowestTestingError = Double.POSITIVE_INFINITY;
 		int iteration = 0;
@@ -83,7 +83,7 @@ public class Trainer extends Runner implements Runnable {
 					double[] inputs = datapoint.getInputs();
 		
 					// feed inputs through neural network to get prediction
-					double[] predictedOutputs = nnet.run(datapoint);
+					double[] predictedOutputs = nnet.classify(datapoint);
 					
 					// what the classification should be
 					int[] expectedOutputs = datapoint.getClassification();
@@ -141,7 +141,7 @@ public class Trainer extends Runner implements Runnable {
 				Data testDatapoint = testFold.get(datapointIndex);
 				
 				// get input values and feed them into the neural network
-				double[] predictedTestOutputs = nnet.run(testDatapoint);
+				double[] predictedTestOutputs = nnet.classify(testDatapoint);
 				
 				// compute what the output should be
 				int[] actualOutputs = testDatapoint.getClassification();
